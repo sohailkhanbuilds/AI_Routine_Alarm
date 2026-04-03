@@ -3,7 +3,7 @@ name: Build Flet APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:   # manual trigger button on GitHub
+  workflow_dispatch:
 
 jobs:
   build-apk:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -24,22 +24,36 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Flutter
+      - name: Setup Flutter 3.27.4
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.27.4'
           channel: stable
           cache: true
 
+      - name: Verify Flutter
+        run: flutter --version
+
       - name: Install Flet CLI
-        run: pip install flet
+        run: pip install "flet==0.24.1"
 
       - name: Build APK
-        run: flet build apk --no-rich-output
+        run: |
+          flet build apk \
+            --flutter-sdk $FLUTTER_ROOT \
+            --no-rich-output \
+            --verbose
+        env:
+          FLUTTER_ROOT: ${{ env.FLUTTER_ROOT }}
+
+      - name: Find APK
+        run: find . -name "*.apk" 2>/dev/null
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AI-Routine-Alarm-APK
-          path: build/apk/app-release.apk
+          path: |
+            build/apk/*.apk
+            build/**/*.apk
           retention-days: 7
