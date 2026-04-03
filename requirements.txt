@@ -1,0 +1,4 @@
+flet
+google-generativeai
+gtts
+APScheduler
