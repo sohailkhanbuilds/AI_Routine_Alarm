@@ -38,11 +38,7 @@ jobs:
         run: pip install "flet==0.24.1"
 
       - name: Build APK
-        run: |
-          flet build apk \
-            --flutter-sdk $FLUTTER_ROOT \
-            --no-rich-output \
-            --verbose
+        run: flet build apk --no-rich-output --verbose
         env:
           FLUTTER_ROOT: ${{ env.FLUTTER_ROOT }}
 
